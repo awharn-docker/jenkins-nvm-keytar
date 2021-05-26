@@ -1,11 +1,11 @@
 # This Dockerfile is used to build an image capable of running the npm keytar node module
 # It must be given the capability of IPC_LOCK or be run in privilaged mode to properly operate
-FROM tucker01/jenkins-nvm-agent
+FROM awharn/jenkins-nvm-agent
 
 USER root
 
 # Installs the libsecret library required by keytar
-RUN apt-get update && apt-get install -y gnome-keyring libsecret-1-dev
+RUN apt-get update && apt-get install -y gnome-keyring libsecret-1-dev dbus-x11
 
 ARG tempDir=/tmp/jenkins-npm-keytar
 ARG sshEnv=/etc/profile.d/dbus_start.sh
