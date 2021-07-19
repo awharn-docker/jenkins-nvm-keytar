@@ -41,5 +41,7 @@ RUN printf "\nif test -z \"\$SSH_CONNECTION\"; then\n\techo jenkins | gnome-keyr
 # Cleanup any temp files we have created
 RUN rm -rdf ${tempDir}
 
+RUN apt-get -q autoremove && apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
+
 # Exec ssh
 CMD ["/usr/sbin/sshd", "-D"]
