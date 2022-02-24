@@ -1,4 +1,4 @@
-name: ci
+name: Node 12
 on:
   push:
     branches:
@@ -30,9 +30,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          build-args: |
+            IMAGE_VERSION_ARG=12
           tags: |
             awharn/jenkins-nvm-keytar:latest
+            awharn/jenkins-nvm-keytar:12
             ghcr.io/awharn/jenkins-nvm-keytar:latest
+            ghcr.io/awharn/jenkins-nvm-keytar:12
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}

@@ -1,6 +1,7 @@
 # This Dockerfile is used to build an image capable of running the npm keytar node module
 # It must be given the capability of IPC_LOCK or be run in privilaged mode to properly operate
-FROM awharn/jenkins-nvm-agent
+ARG IMAGE_VERSION_ARG
+FROM awharn/jenkins-nvm-agent:${IMAGE_VERSION_ARG}
 
 USER root
 
