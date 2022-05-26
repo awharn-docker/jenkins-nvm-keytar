@@ -1,4 +1,4 @@
-name: Node 12
+name: Node 14
 on:
   push:
     branches:
@@ -31,12 +31,12 @@ jobs:
         with:
           push: true
           build-args: |
-            IMAGE_VERSION_ARG=12
+            IMAGE_VERSION_ARG=14
           tags: |
             awharn/jenkins-nvm-keytar:latest
-            awharn/jenkins-nvm-keytar:12
+            awharn/jenkins-nvm-keytar:14
             ghcr.io/awharn/jenkins-nvm-keytar:latest
-            ghcr.io/awharn/jenkins-nvm-keytar:12
+            ghcr.io/awharn/jenkins-nvm-keytar:14
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -49,7 +49,7 @@ jobs:
           repo:     awharn/jenkins-nvm-zowe-cli
           token:    ${{ secrets.PAT }}
 
-      - name: Update Downstream - Next
+      - name: Update Downstream - zowe-v2-lts
         uses: benc-uk/workflow-dispatch@v1
         with: 
           ref:      refs/heads/next
