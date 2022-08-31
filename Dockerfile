@@ -116,8 +116,7 @@ RUN cat ${tempDir}/dbus_start>>${sshEnv}
 # Enable for all bash profiles
 # Add the dbus launch before exiting when not running interactively
 RUN sed -i -e "/# If not running interactively, don't do anything/r ${tempDir}/dbus_start" -e //N ${bashEnv}
-
-RUN printf "\nif test -z \"\$SSH_CONNECTION\"; then\n\techo jenkins | gnome-keyring-daemon --unlock --components=secrets > /dev/null\nfi\n" >> /home/jenkins/.bashrc
+RUN printf "\necho jenkins | gnome-keyring-daemon --unlock --components=secrets > /dev/null\n" >> /home/jenkins/.bashrc
 
 # Cleanup any temp files we have created
 RUN rm -rdf ${tempDir}
