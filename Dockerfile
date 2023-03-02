@@ -8,7 +8,13 @@ ARG IMAGE_VERSION_ARG
 ARG DEFAULT_NODE_VERSION=${IMAGE_VERSION_ARG:-14}
 ENV DEBIAN_FRONTEND="noninteractive"
 
-# Upgrade and install packages
+# Change source list to use HTTPS mirror
+RUN apt-get -q update &&\
+    apt-get -qqy install --no-install-recommends ca-certificates &&\
+    sed -i 's/deb http:\/\/archive.ubuntu.com\/ubuntu\//deb https:\/\/mirrors.wikimedia.org\/ubuntu\//g' /etc/apt/sources.list &&\
+    sed -i 's/deb http:\/\/security.ubuntu.com\/ubuntu\//deb https:\/\/mirrors.wikimedia.org\/ubuntu\//g' /etc/apt/sources.list
+
+# Upgrade and install packages, use HTTPS mirrors
 RUN apt-get -q update &&\
     apt-get -qqy upgrade --no-install-recommends &&\
     apt-get -qqy install --no-install-recommends locales sudo wget unzip zip git curl libxss1 sshpass vim nano expect build-essential software-properties-common gnome-keyring libsecret-1-dev dbus-x11 &&\
@@ -19,6 +25,7 @@ RUN apt-get -q update &&\
     mkdir -p /var/run/sshd &&\
     # Install JDK 8 and 11
     add-apt-repository -y ppa:openjdk-r/ppa &&\
+    sed -i 's/deb http:\/\/ppa.launchpad.net\/openjdk-r\/ppa\/ubuntu/deb https:\/\/ppa.launchpadcontent.net\/openjdk-r\/ppa\/ubuntu/g' /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-focal.list &&\
     # Add node version 14 which should bring in npm, add maven and build essentials and required ssl certificates to contact maven central
     # expect is also installed so that you can use that to login to your npm registry if you need to
     # Note: we'll install Node.js globally and include the build tools for pyhton - but nvm will override when the container starts
