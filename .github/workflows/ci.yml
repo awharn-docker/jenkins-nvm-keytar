@@ -1,4 +1,4 @@
-name: Node 16
+name: ci
 on:
   push:
     branches:
