@@ -1,0 +1,120 @@
+name: Node 16
+on:
+  push:
+    branches:
+      - 'master'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy-n14:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          build-args: |
+            IMAGE_VERSION_ARG=14
+          tags: |
+            awharn/jenkins-nvm-keytar:14
+            ghcr.io/awharn/jenkins-nvm-keytar:14
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+
+  build-and-deploy-n16:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          build-args: |
+            IMAGE_VERSION_ARG=16
+          tags: |
+            awharn/jenkins-nvm-keytar:latest
+            awharn/jenkins-nvm-keytar:16
+            ghcr.io/awharn/jenkins-nvm-keytar:latest
+            ghcr.io/awharn/jenkins-nvm-keytar:16
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+
+  build-and-deploy-n18:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          build-args: |
+            IMAGE_VERSION_ARG=18
+          tags: |
+            awharn/jenkins-nvm-keytar:18
+            ghcr.io/awharn/jenkins-nvm-keytar:18
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+
+  update-downstream:
+    runs-on: ubuntu-20.04
+    needs: build-and-deploy-n16
+    steps:
+      - name: Update Downstream
+        uses: benc-uk/workflow-dispatch@v1
+        with: 
+          ref:      refs/heads/master
+          workflow: ci
+          repo:     awharn/jenkins-nvm-zowe-cli
+          token:    ${{ secrets.PAT }}
