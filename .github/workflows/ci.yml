@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -32,6 +37,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
+          platforms: linux/amd64,linux/arm64
           build-args: |
             IMAGE_VERSION_ARG=14
           tags: |
@@ -46,6 +52,11 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -65,6 +76,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
+          platforms: linux/amd64,linux/arm64
           build-args: |
             IMAGE_VERSION_ARG=16
           tags: |
@@ -81,6 +93,11 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -100,6 +117,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
+          platforms: linux/amd64,linux/arm64
           build-args: |
             IMAGE_VERSION_ARG=18
           tags: |
