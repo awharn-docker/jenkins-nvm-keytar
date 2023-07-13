@@ -45,7 +45,8 @@ ENV LC_ALL en_US.UTF-8
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
 RUN dpkg-reconfigure dash
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME_AMD=/usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME_ARM=/usr/lib/jvm/java-11-openjdk-arm64
 
 # Add Jenkins user
 RUN sudo useradd jenkins --shell /bin/bash --create-home
