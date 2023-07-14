@@ -140,8 +140,8 @@ jobs:
           build-args: |
             IMAGE_VERSION_ARG=14
           tags: |
-            awharn/jenkins-nvm-keytar:14
-            ghcr.io/awharn-docker/jenkins-nvm-keytar:14
+            awharn/jenkins-nvm-keytar-arm:14
+            ghcr.io/awharn-docker/jenkins-nvm-keytar-arm:14
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -174,10 +174,10 @@ jobs:
           build-args: |
             IMAGE_VERSION_ARG=16
           tags: |
-            awharn/jenkins-nvm-keytar:latest
-            awharn/jenkins-nvm-keytar:16
-            ghcr.io/awharn-docker/jenkins-nvm-keytar:latest
-            ghcr.io/awharn-docker/jenkins-nvm-keytar:16
+            awharn/jenkins-nvm-keytar-arm:latest
+            awharn/jenkins-nvm-keytar-arm:16
+            ghcr.io/awharn-docker/jenkins-nvm-keytar-arm:latest
+            ghcr.io/awharn-docker/jenkins-nvm-keytar-arm:16
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -210,8 +210,8 @@ jobs:
           build-args: |
             IMAGE_VERSION_ARG=18
           tags: |
-            awharn/jenkins-nvm-keytar:18
-            ghcr.io/awharn-docker/jenkins-nvm-keytar:18
+            awharn/jenkins-nvm-keytar-arm:18
+            ghcr.io/awharn-docker/jenkins-nvm-keytar-arm:18
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -225,5 +225,5 @@ jobs:
         with: 
           ref:      refs/heads/master
           workflow: ci
-          repo:     awharn/jenkins-nvm-zowe-cli
+          repo:     awharn-docker/jenkins-nvm-zowe-cli
           token:    ${{ secrets.PAT }}
