@@ -37,7 +37,7 @@ jobs:
             IMAGE_VERSION_ARG=14
           tags: |
             awharn/jenkins-nvm-keytar:14
-            ghcr.io/awharn/jenkins-nvm-keytar:14
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:14
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -72,8 +72,8 @@ jobs:
           tags: |
             awharn/jenkins-nvm-keytar:latest
             awharn/jenkins-nvm-keytar:16
-            ghcr.io/awharn/jenkins-nvm-keytar:latest
-            ghcr.io/awharn/jenkins-nvm-keytar:16
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:latest
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:16
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -107,7 +107,7 @@ jobs:
             IMAGE_VERSION_ARG=18
           tags: |
             awharn/jenkins-nvm-keytar:18
-            ghcr.io/awharn/jenkins-nvm-keytar:18
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:18
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -141,7 +141,7 @@ jobs:
             IMAGE_VERSION_ARG=14
           tags: |
             awharn/jenkins-nvm-keytar:14
-            ghcr.io/awharn/jenkins-nvm-keytar:14
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:14
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -176,8 +176,8 @@ jobs:
           tags: |
             awharn/jenkins-nvm-keytar:latest
             awharn/jenkins-nvm-keytar:16
-            ghcr.io/awharn/jenkins-nvm-keytar:latest
-            ghcr.io/awharn/jenkins-nvm-keytar:16
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:latest
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:16
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
@@ -211,7 +211,7 @@ jobs:
             IMAGE_VERSION_ARG=18
           tags: |
             awharn/jenkins-nvm-keytar:18
-            ghcr.io/awharn/jenkins-nvm-keytar:18
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:18
       
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
