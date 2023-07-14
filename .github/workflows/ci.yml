@@ -13,11 +13,6 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -37,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           build-args: |
             IMAGE_VERSION_ARG=14
           tags: |
@@ -52,11 +47,6 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -76,7 +66,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           build-args: |
             IMAGE_VERSION_ARG=16
           tags: |
@@ -93,11 +83,6 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
       
       - name: Login to Dockerhub
         uses: docker/login-action@v2
@@ -117,7 +102,111 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+          build-args: |
+            IMAGE_VERSION_ARG=18
+          tags: |
+            awharn/jenkins-nvm-keytar:18
+            ghcr.io/awharn/jenkins-nvm-keytar:18
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+        
+  build-and-deploy-n14-arm:
+    runs-on: ARM64
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          platforms: linux/arm64
+          build-args: |
+            IMAGE_VERSION_ARG=14
+          tags: |
+            awharn/jenkins-nvm-keytar:14
+            ghcr.io/awharn/jenkins-nvm-keytar:14
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+
+  build-and-deploy-n16-arm:
+    runs-on: ARM64
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          platforms: linux/arm64
+          build-args: |
+            IMAGE_VERSION_ARG=16
+          tags: |
+            awharn/jenkins-nvm-keytar:latest
+            awharn/jenkins-nvm-keytar:16
+            ghcr.io/awharn/jenkins-nvm-keytar:latest
+            ghcr.io/awharn/jenkins-nvm-keytar:16
+      
+      - name: Image Digest
+        run:  echo ${{ steps.build.outputs.digest }}
+
+  build-and-deploy-n18-arm:
+    runs-on: ARM64
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: awharn
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        id:   build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          platforms: linux/arm64
           build-args: |
             IMAGE_VERSION_ARG=18
           tags: |
@@ -129,7 +218,7 @@ jobs:
 
   update-downstream:
     runs-on: ubuntu-20.04
-    needs: build-and-deploy-n16
+    needs: [build-and-deploy-n16, build-and-deploy-n16-arm]
     steps:
       - name: Update Downstream
         uses: benc-uk/workflow-dispatch@v1
