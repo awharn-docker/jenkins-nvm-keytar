@@ -64,9 +64,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | b
 RUN groupadd npmusers
 RUN usermod -aG npmusers jenkins 
 
-# Also install nvm for user jenkins
+# Also install nvm and rust for user jenkins
 USER jenkins
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
 USER root
 
 ARG tempDir=/tmp/jenkins-npm-keytar
