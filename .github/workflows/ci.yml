@@ -72,7 +72,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: awharn
           password: ${{ secrets.GH_CODE_REPOSITORY_TOKEN }}
           logout: false
 
