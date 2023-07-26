@@ -147,7 +147,7 @@ jobs:
         run:  echo ${{ steps.build.outputs.digest }}
 
   build-and-deploy-n16-arm:
-    runs-on: ARM64
+    runs-on: fastarm
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -216,14 +216,14 @@ jobs:
       - name: Image Digest
         run:  echo ${{ steps.build.outputs.digest }}
 
-  update-downstream:
-    runs-on: ubuntu-20.04
-    needs: [build-and-deploy-n16, build-and-deploy-n16-arm]
-    steps:
-      - name: Update Downstream
-        uses: benc-uk/workflow-dispatch@v1
-        with: 
-          ref:      refs/heads/master
-          workflow: ci
-          repo:     awharn-docker/jenkins-nvm-zowe-cli
-          token:    ${{ secrets.PAT }}
+  # update-downstream:
+  #   runs-on: ubuntu-20.04
+  #   needs: [build-and-deploy-n16, build-and-deploy-n16-arm]
+  #   steps:
+  #     - name: Update Downstream
+  #       uses: benc-uk/workflow-dispatch@v1
+  #       with: 
+  #         ref:      refs/heads/master
+  #         workflow: ci
+  #         repo:     awharn-docker/jenkins-nvm-zowe-cli
+  #         token:    ${{ secrets.PAT }}
