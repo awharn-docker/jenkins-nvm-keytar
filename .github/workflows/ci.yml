@@ -67,7 +67,6 @@ jobs:
         with:
           username: awharn
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          logout: false
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
