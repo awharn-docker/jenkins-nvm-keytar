@@ -44,7 +44,7 @@ jobs:
             IMAGE_VERSION_ARG=${{ matrix.node }}
           tags: |
             awharn/jenkins-nvm-keytar:${{ matrix.node }}
-            ghcr.io/awharn-docker/jenkins-nvm-keytar${{ matrix.node }}
+            ghcr.io/awharn-docker/jenkins-nvm-keytar:${{ matrix.node }}
             ${{ matrix.node == env.MAIN_NODE_VERSION && 'awharn/jenkins-nvm-keytar:latest' || '' }}
             ${{ matrix.node == env.MAIN_NODE_VERSION && 'ghcr.io/awharn-docker/jenkins-nvm-keytar:latest' || '' }}
       
