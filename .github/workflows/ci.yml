@@ -98,9 +98,6 @@ jobs:
     needs: [build-and-deploy-x64, build-and-deploy-arm]
     steps:
       - name: Update Downstream
-        uses: benc-uk/workflow-dispatch@v1
-        with: 
-          ref:      refs/heads/master
-          workflow: ci
-          repo:     awharn-docker/jenkins-nvm-zowe-cli
-          token:    ${{ secrets.PAT }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: gh workflow run -R awharn-docker/jenkins-nvm-zowe-cli -r master ci.yml
