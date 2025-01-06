@@ -23,23 +23,21 @@ RUN apt-get -q update &&\
     apt-get -q autoremove &&\
     sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd &&\
     mkdir -p /var/run/sshd &&\
-    # Install JDK 8 and 11
-    add-apt-repository -y ppa:openjdk-r/ppa &&\
-    sed -i 's/deb http:\/\/ppa.launchpad.net\/openjdk-r\/ppa\/ubuntu/deb https:\/\/ppa.launchpadcontent.net\/openjdk-r\/ppa\/ubuntu/g' /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-focal.list &&\
+    # Install JDK 11 and 17
     # Add node version 20 which should bring in npm, add maven and build essentials and required ssl certificates to contact maven central
     # expect is also installed so that you can use that to login to your npm registry if you need to
     # Note: we'll install Node.js globally and include the build tools for pyhton - but nvm will override when the container starts
     curl -sL "https://deb.nodesource.com/setup_$DEFAULT_NODE_VERSION.x" | bash - &&\
     apt-get -q update &&\
-    apt-get -qqy install --no-install-recommends nodejs openjdk-11-jre-headless openjdk-8-jre-headless openjdk-11-jdk openjdk-8-jdk maven ca-certificates-java &&\
+    apt-get -qqy install --no-install-recommends nodejs openjdk-17-jre-headless openjdk-11-jre-headless openjdk-17-jdk openjdk-11-jdk maven ca-certificates-java &&\
     update-ca-certificates -f &&\
     apt-get -q autoremove &&\
     apt-get -q clean -y &&\
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*.bin
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # Get rid of dash and use bash instead
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
