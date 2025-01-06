@@ -1,11 +1,11 @@
 # This Dockerfile is used to build an image capable of running the npm keytar node module
 # It must be given the capability of IPC_LOCK or be run in privilaged mode to properly operate
-FROM ubuntu:focal
+FROM ubuntu:noble
 
 USER root
 
 ARG IMAGE_VERSION_ARG
-ARG DEFAULT_NODE_VERSION=${IMAGE_VERSION_ARG:-16}
+ARG DEFAULT_NODE_VERSION=${IMAGE_VERSION_ARG:-20}
 ENV DEBIAN_FRONTEND="noninteractive"
 
 # Change source list to use HTTPS mirror
@@ -26,7 +26,7 @@ RUN apt-get -q update &&\
     # Install JDK 8 and 11
     add-apt-repository -y ppa:openjdk-r/ppa &&\
     sed -i 's/deb http:\/\/ppa.launchpad.net\/openjdk-r\/ppa\/ubuntu/deb https:\/\/ppa.launchpadcontent.net\/openjdk-r\/ppa\/ubuntu/g' /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-focal.list &&\
-    # Add node version 16 which should bring in npm, add maven and build essentials and required ssl certificates to contact maven central
+    # Add node version 20 which should bring in npm, add maven and build essentials and required ssl certificates to contact maven central
     # expect is also installed so that you can use that to login to your npm registry if you need to
     # Note: we'll install Node.js globally and include the build tools for pyhton - but nvm will override when the container starts
     curl -sL "https://deb.nodesource.com/setup_$DEFAULT_NODE_VERSION.x" | bash - &&\
