@@ -8,7 +8,7 @@ on:
     - cron: '0 12 * * 0'
 
 env:
-  MAIN_NODE_VERSION: 18
+  MAIN_NODE_VERSION: 20
 
 jobs:
   build-and-deploy-x64:
