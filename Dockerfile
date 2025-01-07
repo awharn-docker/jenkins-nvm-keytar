@@ -32,6 +32,16 @@ RUN apt-get -q update &&\
     apt-get -qqy install --no-install-recommends nodejs openjdk-17-jre-headless openjdk-11-jre-headless openjdk-17-jdk openjdk-11-jdk maven ca-certificates-java &&\
     update-ca-certificates -f &&\
     apt-get -q autoremove &&\
+    ## Install GH CLI
+    (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) &&\
+    mkdir -p -m 755 /etc/apt/keyrings &&\
+    out=$(mktemp) &&\
+    wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg &&\
+    cat $out | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null &&\
+	chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg &&\
+	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null &&\
+	apt-get -q update &&\
+	apt-get -qqy install gh &&\
     apt-get -q clean -y &&\
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*.bin
 
@@ -47,8 +57,8 @@ ENV JAVA_HOME_AMD=/usr/lib/jvm/java-11-openjdk-amd64
 ENV JAVA_HOME_ARM=/usr/lib/jvm/java-11-openjdk-arm64
 
 # Add Jenkins user
-RUN sudo useradd jenkins --shell /bin/bash --create-home
-RUN sudo usermod -a -G sudo jenkins
+RUN useradd jenkins --shell /bin/bash --create-home
+RUN usermod -a -G sudo jenkins
 RUN echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN echo 'jenkins:jenkins' | chpasswd
 
