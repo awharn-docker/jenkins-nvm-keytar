@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'update-ci'
   workflow_dispatch:
   schedule:
     - cron: '0 12 * * 0'
@@ -181,6 +180,10 @@ jobs:
           type=raw,value=${{ matrix.node }}
           ${{ matrix.node == env.MAIN_NODE_VERSION && 'type=raw,value=latest' || '' }}
 
+    - name: Wait for others
+      if: matrix.node == env.MAIN_NODE_VERSION
+      run: sleep 30
+    
     - name: Create manifest list and push
       working-directory: ${{ runner.temp }}/digests
       run: |
@@ -194,11 +197,11 @@ jobs:
         docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
         docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
 
-  # update-downstream:
-  #   runs-on: ubuntu-22.04
-  #   needs: merge
-  #   steps:
-  #     - name: Update Downstream
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.PAT }}
-  #       run: gh workflow run -R awharn-docker/jenkins-nvm-zowe-cli -r master ci.yml
+  update-downstream:
+    runs-on: ubuntu-22.04
+    needs: merge
+    steps:
+      - name: Update Downstream
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: gh workflow run -R awharn-docker/jenkins-nvm-zowe-cli -r master ci.yml
