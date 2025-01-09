@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'update-ci'
   workflow_dispatch:
   schedule:
     - cron: '0 12 * * 0'
@@ -61,15 +62,15 @@ jobs:
       
       - name: Export digest
         run: |
-          mkdir -p /tmp/digests
+          mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
       
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
+          path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
           overwrite: true
@@ -125,15 +126,15 @@ jobs:
       
       - name: Export digest
         run: |
-          mkdir -p /tmp/digests
+          mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
       
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
+          path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
           overwrite: true
@@ -149,7 +150,7 @@ jobs:
     - name: Download digests
       uses: actions/download-artifact@v4
       with:
-        path: /tmp/digests
+        path: ${{ runner.temp }}/digests
         pattern: digests-${{ matrix.node }}-*
         merge-multiple: true
 
@@ -181,7 +182,7 @@ jobs:
           ${{ matrix.node == env.MAIN_NODE_VERSION && 'type=raw,value=latest' || '' }}
 
     - name: Create manifest list and push
-      working-directory: /tmp/digests
+      working-directory: ${{ runner.temp }}/digests
       run: |
         docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
           $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
@@ -193,11 +194,11 @@ jobs:
         docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
         docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
 
-  update-downstream:
-    runs-on: ubuntu-22.04
-    needs: merge
-    steps:
-      - name: Update Downstream
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: gh workflow run -R awharn-docker/jenkins-nvm-zowe-cli -r master ci.yml
+  # update-downstream:
+  #   runs-on: ubuntu-22.04
+  #   needs: merge
+  #   steps:
+  #     - name: Update Downstream
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.PAT }}
+  #       run: gh workflow run -R awharn-docker/jenkins-nvm-zowe-cli -r master ci.yml
