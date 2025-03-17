@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: '0 12 * * 0'
 
+permissions:
+  packages: write
+
 env:
   MAIN_NODE_VERSION: 20
   DOCKERHUB_USERNAME: awharn
@@ -75,7 +78,7 @@ jobs:
           overwrite: true
 
   build-and-deploy-arm:
-    runs-on: fastarm
+    runs-on: ubuntu-22.04-arm
     strategy:
       fail-fast: false
       matrix:
@@ -108,7 +111,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
           logout: false
 
       - name: Build & Push
@@ -139,7 +142,7 @@ jobs:
           overwrite: true
 
   merge:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
     strategy:
       fail-fast: false
       matrix:
@@ -198,7 +201,7 @@ jobs:
         docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
 
   update-downstream:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
     needs: merge
     steps:
       - name: Update Downstream
