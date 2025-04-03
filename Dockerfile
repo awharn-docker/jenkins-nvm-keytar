@@ -64,57 +64,32 @@ RUN echo 'jenkins:jenkins' | chpasswd
 
 COPY openssl.cnf /etc/ssl/openssl.cnf
 
-# Install nvm to enable multiple versions of node runtime and define environment 
-# variable for setting the desired node js version (defaulted to "current" for Node.js)
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
 # dd the jenkins users
 RUN groupadd npmusers
 RUN usermod -aG npmusers jenkins 
 
-# Also install nvm and rust for user jenkins
-USER jenkins
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
-USER root
-
 ARG tempDir=/tmp/jenkins-npm-keytar
-ARG sshEnv=/etc/profile.d/npm_setup.sh
-ARG bashEnv=/etc/bash.bashrc
+ARG shEnv=/etc/profile
 
-# First move the template file over
-RUN mkdir ${tempDir}
-COPY env.bashrc ${tempDir}/env.bashrc
 
 # Next, make the file available to all to read and source
 # RUN chmod +r /usr/local/env.sh
-ENV ENV=${bashEnv}
-
-# Create a shell file that applies the configuration for sessions. (anything not bash really)
-RUN touch ${sshEnv}
-RUN echo '#!bin/sh'>>${sshEnv} \
-RUN cat ${tempDir}/env.bashrc>>${sshEnv}
-
-# Create a properties file that is used for all bash sessions on the machine
-# Add the environment setup before the exit line in the global bashrc file
-RUN sed -i -e "/# If not running interactively, don't do anything/r ${tempDir}/env.bashrc" -e //N ${bashEnv}
-
-# Cleanup after ourselves
-RUN rm -rdf ${tempDir}
+ENV ENV=/etc/profile
 
 # Copy the setup script and node/nvm scripts for execution (allow anyone to run them)
 ARG scriptsDir=/usr/local/bin/
 COPY docker-entrypoint.sh ${scriptsDir}
 COPY install_node.sh ${scriptsDir}
 
-RUN install_node.sh ${DEFAULT_NODE_VERSION}
-RUN su -c "install_node.sh ${DEFAULT_NODE_VERSION}" - jenkins
-
 ARG sshEnv=/etc/profile.d/dbus_start.sh
 ARG loginFile=pam.d.config
 
 # Copy the PAM configuration options to allow auto unlocking of the gnome keyring
+# First move the template file over
+RUN mkdir ${tempDir}
 COPY ${loginFile} ${tempDir}/${loginFile}
+COPY env.profile ${tempDir}/env.profile
+COPY local.profile ${tempDir}/.profile
 
 # Enable unlocking for ssh
 RUN cat ${tempDir}/${loginFile}>>/etc/pam.d/sshd
@@ -132,8 +107,26 @@ RUN cat ${tempDir}/dbus_start>>${sshEnv}
 
 # Enable for all bash profiles
 # Add the dbus launch before exiting when not running interactively
-RUN sed -i -e "/# If not running interactively, don't do anything/r ${tempDir}/dbus_start" -e //N ${bashEnv}
-RUN printf "\necho jenkins | gnome-keyring-daemon --unlock --components=secrets > /dev/null\n" >> /home/jenkins/.bashrc
+RUN printf "\n. /etc/profile\n" >> /home/jenkins/.bashrc
+RUN printf "\necho jenkins | gnome-keyring-daemon --unlock --components=secrets > /dev/null\n" >> /home/jenkins/.profile
+
+# Install nvm to enable multiple versions of node runtime and define environment 
+# variable for setting the desired node js version (defaulted to "current" for Node.js)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | sh
+
+# Also install nvm and rust for user jenkins
+USER jenkins
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | sh
+
+USER root
+
+RUN install_node.sh ${DEFAULT_NODE_VERSION}
+RUN su -c "install_node.sh ${DEFAULT_NODE_VERSION}" - jenkins
+RUN cat ${tempDir}/env.profile >> /etc/profile
+RUN cp ${tempDir}/.profile /home/jenkins/.profile && chown jenkins:jenkins /home/jenkins/.profile
+RUN cp ${tempDir}/.profile /root/.profile
 
 # Cleanup any temp files we have created
 RUN rm -rdf ${tempDir}
